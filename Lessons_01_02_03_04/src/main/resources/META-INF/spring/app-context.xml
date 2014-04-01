@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<description>Mastering Spring Framework Blog - Lesson 01</description>
+
+	<!-- <context:component-scan base-package="com.mastspring.lesson01" /> -->
+
+	<bean id="consolewisher" class="com.mastspring.lesson01.ConsoleMessageWisher">
+		<property name="wishingMessage" value="Welcome to Mastering Spring Framework Blog"></property>
+	</bean>
+
+	<bean id="icecreamservice" class="com.mastspring.lesson01.SomeClientService"
+		factory-method="getInstance">
+		<constructor-arg name="whatIsMyName" value="Ice Cream"></constructor-arg>
+	</bean>
+
+	<bean id="Scott" class="com.mastspring.lesson01.Employee">
+		<constructor-arg name="name" value="William Scott"></constructor-arg>
+		<constructor-arg name="empId" value="1"></constructor-arg>
+		<constructor-arg name="salary" value="55000.78"></constructor-arg>
+		<constructor-arg name="age" value="29"></constructor-arg>
+	</bean>
+
+	<bean id="Tiger" class="com.mastspring.lesson01.Employee">
+		<constructor-arg index="0" value="Jason Tiger"></constructor-arg> <!-- "name" is not a mandatory -->
+		<constructor-arg name="empId" value="2"></constructor-arg>
+		<constructor-arg type="byte" value="27"></constructor-arg>
+		<constructor-arg name="salary" value="45000" type="double"
+			index="3"></constructor-arg> <!-- redundant code -->
+	</bean>
+
+	<!-- Setter Based DI : No index/type based setting -->
+	<bean id="Elizabeth" class="com.mastspring.lesson01.Employee">
+		<property name="name" value="Queen Elizabeth"></property>
+		<property name="empId" value="3"></property>
+		<property name="salary" value="3000000"></property>
+		<property name="age" value="90"></property>
+	</bean>
+
+	<bean id="collectionExample" class="com.mastspring.lesson01.CollectionsExampleBean">
+		<property name="myList">
+			<list>
+				<value>Life of PI</value>
+				<value>Gravity</value>
+				<value>12 years a Slave</value>
+			</list>
+		</property>
+
+		<property name="mySet">
+			<set>
+				<value>Finding Nemo</value>
+				<value>Wall-E</value>
+			</set>
+		</property>
+
+		<property name="myMap">
+			<map>
+				<entry key="person" value="Elizabeth" />
+				<entry key="personobj" value-ref="Elizabeth" />
+			</map>
+		</property>
+
+		<property name="myProperties">
+			<props>
+				<prop key="Name">Sivaji Kondapalli</prop>
+				<prop key="Occupation">Software Engineer</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="myCompany" class="com.mastspring.lesson01.FunnyCompany"
+		autowire="byType"></bean>
+
+	<bean id="canteenService" class="com.mastspring.lesson01.CanteenService">
+		<constructor-arg name="canteenName" value="Whetherspoons" />
+	</bean>
+
+	<bean id="securityService" class="com.mastspring.lesson01.SecurityService"
+		abstract="true">
+		<constructor-arg name="typeOfSecurity" value="Semi Automated"></constructor-arg>
+	</bean>
+
+	<bean id="fingerPrintService" class="com.mastspring.lesson01.FingerPrintService"
+		parent="securityService">
+		<constructor-arg name="scannerMachineName" value="Airport Style Scanner"
+			index="1"></constructor-arg>
+	</bean>
+	<!-- <bean id="fingerPrintService1" class="com.springframework.FingerPrintService" 
+		parent="securityService" > <constructor-arg name="scannerMachineName" value="Canon 
+		12345" index="1"></constructor-arg> </bean> -->
+
+	<!--  Singleton Vs Prototype -->
+	<bean id="queen" class="com.mastspring.lesson02.Queen" p:personalSec-ref="soldier" />
+	<bean id="soldier" class="com.mastspring.lesson02.Soldier" scope="prototype"/>
+
+	<!--  Custom Scope Example -->
+	<bean id="benandjerryscopebean" class="com.mastspring.lesson02.MyCustomScope" />
+
+	<bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+		<property name="scopes">
+			<map>
+				<entry key="bandjscope">
+					<ref bean="benandjerryscopebean" />
+				</entry>
+			</map>
+		</property>
+	</bean>
+
+	<bean name="emp1" class="com.mastspring.lesson02.FourthEmployee" scope="bandjscope" />
+
+
+	<!--  Customising Bean Nature -->
+	<context:annotation-config/>  <!--  so that annotations will be recognised -->
+	<!-- <bean id="customBean" class="com.mastspring.lesson02.CustomisingBeanNature" init-method="customInit" destroy-method="customDestroy" />
+ -->
+ 
+ 	<!--  Bean Post Processors -->
+ 	<!-- <bean class="com.mastspring.lesson02.MyBeanPostProcessor"/> -->
+ 	<!--  you should comment out above line after executing respective example or else for each run you get lots of messages to console -->
+ 
+ 	<!--  Container ExtensionPoints BFPP -->
+ 	<context:property-placeholder location="inputs.properties"/>
+ 	<bean id="human" class="com.mastspring.lesson02.Human">
+ 		<constructor-arg name="fname" value="${firstname}"/>
+ 		<constructor-arg name="lname" value="${lastname}"/>
+ 		<constructor-arg name="location" value="${location}"/>
+ 		<constructor-arg name="job" value="${jobofhuman}"/>
+ 	</bean>
+ 	
+ 	<context:property-override location="classpath:inputs_override.properties"/>
+  	<bean id="spiderman" class="com.mastspring.lesson02.Human">
+ 		<property name="fname" value="Spidy"/>
+ 		<property name="lname" value="Man"/>
+ 		<property name="location" value="Always USA"/>
+ 		<property name="job" value="Climbing Buildings"/>
+ 	</bean>	
+ 	
+ 	<!--  FactoryBean --> 	
+ 	<bean id="beanfactory" class="com.mastspring.lesson02.MyBeanFactory"/>
+ 	
+ 	
+ 	<!--  Annotations Based Configuration -->
+ 	<bean id="cinema01" class="com.mastspring.lesson03.Cinema" p:length="90" p:name="The Shawshank Redemption"/>
+ 	<bean id="cinema02" class="com.mastspring.lesson03.Cinema" p:length="120" p:name="The Godfather"/>
+ 	<bean id="cinema03" class="com.mastspring.lesson03.Cinema" p:length="98" p:name="Inception"/>
+ 	
+ 	<bean id="scr01" class="com.mastspring.lesson03.CinemaScreen" p:screenName="Screen 01" p:numOfSeats="150"/>
+	<bean id="scr02" class="com.mastspring.lesson03.CinemaScreen" p:screenName="Screen 02" p:numOfSeats="100"/>
+	<bean id="scr03" class="com.mastspring.lesson03.CinemaScreen" p:screenName="Screen 03" p:numOfSeats="200"/>
+
+
+	<bean id="schedue-01" class="com.mastspring.lesson03.MovieSchedule" p:cinema-ref="cinema01" p:screen-ref="scr01"/>
+	<bean id="schedue-02" class="com.mastspring.lesson03.MovieSchedule" p:cinema-ref="cinema02" p:screen-ref="scr02"/>
+	<bean id="schedue-03" class="com.mastspring.lesson03.MovieSchedule" p:cinema-ref="cinema03" p:screen-ref="scr03"/>
+
+ 	<bean id="oc" class="com.mastspring.lesson03.CinemaTheatre" p:name="ODEON Cinemas"/>
+ 	
+ 	<!--  Enable component Scanning -->
+ 	<context:component-scan base-package="com.mastspring"></context:component-scan>
+ 	
+ 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+ 		<property name="basenames">
+ 			<list>
+ 				<value>messages1</value>
+ 			</list>
+ 		</property>
+ 	</bean> 	
+ 	
+ 	
+ 	<!--  Qualifier -->
+ 	<bean id="m1" class="com.mastspring.lesson03.Movie" p:name="The Hangover"/>
+ 	<bean id="m2" class="com.mastspring.lesson03.Movie" p:name="Anchorman 2"/>
+
+ 	<bean id="m3" class="com.mastspring.lesson03.Movie" p:name="The Dark Knight"/>
+ 	<bean id="m4" class="com.mastspring.lesson03.Movie" p:name="Hunger Games"/>
+ 	
+ 	<bean id="m5" class="com.mastspring.lesson03.Movie" p:name="Paranormal Activity"/>
+ 	<bean id="m6" class="com.mastspring.lesson03.Movie" p:name="Drag Me To Hell"/>
+ 	
+ 	<bean id="comedyMovies" class="com.mastspring.lesson03.MovieCatalog">
+ 		<qualifier value="comedy" type="com.mastspring.lesson03.CinemaType"></qualifier>
+ 		<property name="movies">
+ 			<list>
+ 				<ref bean="m1"/>
+ 				<ref bean="m2"/>			
+ 			</list> 		
+ 		</property>
+ 	</bean>
+ 	
+ 	 <bean id="actionMovies" class="com.mastspring.lesson03.MovieCatalog">
+ 		<qualifier value="action" type="com.mastspring.lesson03.CinemaType">
+ 		</qualifier>
+ 		<property name="movies">
+ 			<list>
+ 				<ref bean="m3"/>
+ 				<ref bean="m4"/>			
+ 			</list> 		
+ 		</property>
+ 	</bean>
+ 	
+ 	 <bean id="horrorMovies" class="com.mastspring.lesson03.MovieCatalog">
+ 		<qualifier value="horror"></qualifier>
+ 		<property name="movies">
+ 			<list>
+ 				<ref bean="m5"/>
+ 				<ref bean="m6"/>			
+ 			</list> 		
+ 		</property>
+ 	</bean>
+ 	
+ 	
+</beans>
